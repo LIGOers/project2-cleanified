@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/jar/bridj-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/jar/junit-4.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/jar/jvideoinput-1.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

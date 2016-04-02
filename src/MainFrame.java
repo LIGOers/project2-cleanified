@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * Created by samanthafadrigalan on 3/14/16.
  */
 public class MainFrame extends JFrame{
-    private int numStages = 4, currentStage;
+    private int currentStage;
     private static JPanel rootPanel;
     private String TITLE = "LIGO";
     private final int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
@@ -19,10 +19,11 @@ public class MainFrame extends JFrame{
     private JPanel stage1, stage2, stage3, stage4;
     private int receiverPort = 8000;
     private OSCPortIn receiver;
-    private boolean firstConnection;
     private int swipeCount;
-    private long leapTime, leapTime2;
-    private LeapListener leapListener;
+    private long lastLeapSwipeTime, leapTimeNow;
+    private float swipeDirection;
+    private Controller controller;
+    private final int LEAP_TIMER_DELAY = 10;
 
     public MainFrame() throws java.net.SocketException, InterruptedException{
         buildMainFrame();
@@ -31,7 +32,6 @@ public class MainFrame extends JFrame{
         initStages();
         setStartScreen();
         setOSCHandlers();
-//        setLeapListeners();
         setLeapController();
     }
 
@@ -118,56 +118,84 @@ public class MainFrame extends JFrame{
     }
 
     private void setLeapController() {
-        Controller controller = new Controller();
-        firstConnection = false;
-        swipeCount = 0;
-        leapTime = 0;
-        System.out.println("Inside Leap Controller");
+        controller = new Controller();
+        connectLeap();
+        startLeapControl();
+    }
 
-        ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
+    private void connectLeap() {
+        final Timer timer = new Timer(LEAP_TIMER_DELAY, new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                System.out.println("not connected");
                 if(controller.isConnected()) {
-                    if(!firstConnection) {
-                        controller.enableGesture(Gesture.Type.TYPE_SWIPE);
-                        firstConnection = true;
-                        Frame frame = controller.frame();
-                        System.out.println("frames per second: " + frame.currentFramesPerSecond());
+                    System.out.println("connected!");
+                    controller.enableGesture(Gesture.Type.TYPE_SWIPE);
+                    ((Timer)evt.getSource()).stop();
+                }
+            }
+        });
+        timer.start();
+    }
+
+    private void startLeapControl() {
+        swipeCount = 0;
+        lastLeapSwipeTime = 0;
+        Timer detectLeapGestures = new Timer(LEAP_TIMER_DELAY, new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Frame frame = controller.frame();
+                if(isLeapGestureDetected(frame)) {
+                    swipeCount++;
+                    Gesture gesture = frame.gestures().get(0);
+                    SwipeGesture swipe = new SwipeGesture(gesture);
+                    swipeDirection = swipe.direction().getX();
+                    if(isLeapSwipeFarEnoughFromLastScreenChange()) {
+                        doLeapScreenChange();
+                        outputLeapConsoleLog();
+                        lastLeapSwipeTime = System.currentTimeMillis();
                     }
-                    else {
-                        Frame frame = controller.frame();
-//                        System.out.println(frame.toString());
-                        if(frame.gestures().count() > 0) {
-                            System.out.println("frames per second: " + frame.currentFramesPerSecond());
-                            System.out.println("**********************");
-                            System.out.println("Wow, a gesture!: " + swipeCount++);
-                            Gesture gesture = frame.gestures().get(0);
-
-                            System.out.println("You've made a swipe gesture!");
-                            SwipeGesture swipe = new SwipeGesture(gesture);
-                            Vector swipeDirection = swipe.direction();
-                            System.out.println(swipeDirection.getX());
-
-                            long timeNow = System.currentTimeMillis();
-                            if((timeNow - leapTime) > 200) {
-                                if(swipeDirection.getX() > 0) {
-                                    System.out.println("right");
-                                    swipeLeftScreen();
-                                }
-                                else {
-                                    System.out.println("left");
-                                    swipeRightScreen();
-                                }
-                                leapTime = System.currentTimeMillis();
-                            }
-                            System.out.println(gesture.type());
-                            System.out.println("***************** \n");
-                        }
+                    else{
+                        outputLeapConsoleLog();
                     }
                 }
             }
-        };
-        Timer timer = new Timer(10, actionListener);
-        timer.start();
+        });
+        detectLeapGestures.start();
+    }
+
+    private void doLeapScreenChange() {
+        if(swipeDirection > 0) {
+            swipeLeftScreen();
+        }
+        else {
+            swipeRightScreen();
+        }
+    }
+
+    private boolean isLeapGestureDetected(Frame frame) {
+        return frame.gestures().count() > 0;
+    }
+
+    private boolean isLeapSwipeFarEnoughFromLastScreenChange() {
+        leapTimeNow = System.currentTimeMillis();
+        return (leapTimeNow - lastLeapSwipeTime) > 200;
+    }
+
+    private void outputLeapConsoleLog() {
+        System.out.println("\n**********************");
+        System.out.println("Register LEAP CONTROL [" + swipeCount + "]");
+        System.out.print("SWIPE DIRECTION: ");
+        if(isLeapSwipeFarEnoughFromLastScreenChange()) {
+            if (swipeDirection > 0) {
+                System.out.println("RIGHT");
+            }
+            else{
+                System.out.println("LEFT");
+            }
+        }
+        else {
+            System.out.println("NONE - Too soon from last swipe");
+        }
+        System.out.println("**********************\n");
     }
 
     private void swipeLeftScreen() {
@@ -209,70 +237,4 @@ public class MainFrame extends JFrame{
                 break;
         }
     }
-
-    private void setLeapListeners() {
-        leapListener = new LeapListener();
-        Controller controller = new Controller();
-        controller.addListener(leapListener);
-
-                // Keep this process running until Enter is pressed
-        System.out.println("Press Enter to quit...");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Remove the sample listener when done
-        controller.removeListener(leapListener);
-    }
-
-
-
-    private class LeapListener extends Listener{
-
-        public void onConnect(Controller controller) {
-            System.out.println("Connected");
-            controller.enableGesture(Gesture.Type.TYPE_SWIPE);
-        }
-
-        public void onFrame(Controller controller) {
-            leapTime2 = 0;
-            Frame frame = controller.frame();
-
-
-            if(frame.gestures().count() > 0) {
-
-                System.out.println("**********************");
-                System.out.println("Wow, a gesture!");
-                Gesture gesture = frame.gestures().get(0);
-
-                System.out.println("You've made a swipe gesture!");
-                SwipeGesture swipe = new SwipeGesture(gesture);
-                Vector swipeDirection = swipe.direction();
-                System.out.println(swipeDirection.getX());
-
-                long timeNow = System.currentTimeMillis();
-                if((timeNow - leapTime2) > 500) {
-                    if(swipeDirection.getX() > 0) {
-                        System.out.println("right");
-                    swipeLeftScreen();
-                    }
-                    else {
-                        System.out.println("left");
-                    swipeRightScreen();
-                    }
-                    leapTime2 = System.currentTimeMillis();
-                }
-
-
-                System.out.println(gesture.type());
-                ScreenTapGesture screentap = new ScreenTapGesture(frame.gestures().get(0));
-                System.out.println(screentap.position());
-                System.out.println("********************** \n \n");
-            }
-
-        }
-    }
-
 }

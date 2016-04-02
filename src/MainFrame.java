@@ -11,19 +11,23 @@ import java.awt.event.ActionListener;
  * Created by samanthafadrigalan on 3/14/16.
  */
 public class MainFrame extends JFrame{
-    private int currentStage;
-    private static JPanel rootPanel;
-    private String TITLE = "LIGO";
+    private final String TITLE = "LIGO";
     private final int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
     private final int BUFFER_WIDTH = 1024, BUFFER_HEIGHT = 170;
+    private final int RECEIVER_PORT = 8000;
+    private final int LEAP_TIMER_DELAY = 10;
+    private final long LEAP_SWIPE_DELAY = 300;
+
+    private int currentStage;
+    private static JPanel rootPanel;
     private JPanel stage1, stage2, stage3, stage4;
-    private int receiverPort = 8000;
     private OSCPortIn receiver;
     private int swipeCount;
-    private long lastLeapSwipeTime, leapTimeNow;
+    private long lastLeapSwipeTime;
     private float swipeDirection;
     private Controller controller;
-    private final int LEAP_TIMER_DELAY = 10;
+    private Frame leapFrame;
+    private boolean screenChangedFromLeapSwipe;
 
     public MainFrame() throws java.net.SocketException, InterruptedException{
         buildMainFrame();
@@ -80,13 +84,13 @@ public class MainFrame extends JFrame{
     }
 
     private void setOSCHandlers() throws java.net.SocketException {
-        receiver = new OSCPortIn(receiverPort);
+        receiver = new OSCPortIn(RECEIVER_PORT);
         receiver.addListener("/1/push1", OSChandler(true, false, false, false));
         receiver.addListener("/1/push2", OSChandler(false, true, false, false));
         receiver.addListener("/1/push3", OSChandler(false, false, true, false));
         receiver.addListener("/1/push4", OSChandler(false, false, false, true));
         receiver.startListening();
-        System.out.println("Server is listening on port " + receiverPort + "...");
+        System.out.println("Server is listening on port " + RECEIVER_PORT + "...");
     }
 
     private OSCListener OSChandler(boolean isStage1Visible, boolean isStage2Visible, boolean isStage3Visible, boolean isStage4Visible) {
@@ -139,57 +143,63 @@ public class MainFrame extends JFrame{
 
     private void startLeapControl() {
         swipeCount = 0;
+        screenChangedFromLeapSwipe = false;
         lastLeapSwipeTime = 0;
-        Timer detectLeapGestures = new Timer(LEAP_TIMER_DELAY, new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                Frame frame = controller.frame();
-                if(isLeapGestureDetected(frame)) {
-                    swipeCount++;
-                    Gesture gesture = frame.gestures().get(0);
-                    SwipeGesture swipe = new SwipeGesture(gesture);
-                    swipeDirection = swipe.direction().getX();
-                    if(isLeapSwipeFarEnoughFromLastScreenChange()) {
-                        doLeapScreenChange();
-                        outputLeapConsoleLog();
-                        lastLeapSwipeTime = System.currentTimeMillis();
-                    }
-                    else{
-                        outputLeapConsoleLog();
-                    }
-                }
-            }
-        });
+        Timer detectLeapGestures = new Timer(LEAP_TIMER_DELAY, leapGestureListener());
         detectLeapGestures.start();
     }
 
+    private ActionListener leapGestureListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                leapFrame = controller.frame();
+                if(isLeapGestureDetected()) {
+                    doLeapScreenChange();
+                    outputLeapConsoleLog();
+                }
+            }
+        };
+    }
+
+    private boolean isLeapGestureDetected() {
+        return leapFrame.gestures().count() > 0;
+    }
+
     private void doLeapScreenChange() {
-        if(swipeDirection > 0) {
-            swipeLeftScreen();
+        swipeCount++;
+        if(isLeapSwipeFarEnoughFromLastScreenChange()) {
+            screenChangedFromLeapSwipe = true;
+            if (isLeapSwipedLeft()) {
+                swipeLeftScreen();
+            } else {
+                swipeRightScreen();
+            }
         }
         else {
-            swipeRightScreen();
+            screenChangedFromLeapSwipe = false;
         }
     }
 
-    private boolean isLeapGestureDetected(Frame frame) {
-        return frame.gestures().count() > 0;
+    private boolean isLeapSwipedLeft() {
+        SwipeGesture swipe = new SwipeGesture(leapFrame.gestures().get(0));
+        swipeDirection = swipe.direction().getX();
+        return swipeDirection > 0;
     }
 
     private boolean isLeapSwipeFarEnoughFromLastScreenChange() {
-        leapTimeNow = System.currentTimeMillis();
-        return (leapTimeNow - lastLeapSwipeTime) > 200;
+        return (System.currentTimeMillis() - lastLeapSwipeTime) > LEAP_SWIPE_DELAY;
     }
 
     private void outputLeapConsoleLog() {
         System.out.println("\n**********************");
         System.out.println("Register LEAP CONTROL [" + swipeCount + "]");
         System.out.print("SWIPE DIRECTION: ");
-        if(isLeapSwipeFarEnoughFromLastScreenChange()) {
+        if(screenChangedFromLeapSwipe) {
             if (swipeDirection > 0) {
-                System.out.println("RIGHT");
+                System.out.println("LEFT");
             }
             else{
-                System.out.println("LEFT");
+                System.out.println("RIGHT");
             }
         }
         else {
@@ -216,6 +226,7 @@ public class MainFrame extends JFrame{
                 System.err.println("Invalid Stage number");
                 break;
         }
+        lastLeapSwipeTime = System.currentTimeMillis();
     }
 
     private void swipeRightScreen() {
@@ -236,5 +247,6 @@ public class MainFrame extends JFrame{
                 System.err.println("Invalid Stage number");
                 break;
         }
+        lastLeapSwipeTime = System.currentTimeMillis();
     }
 }

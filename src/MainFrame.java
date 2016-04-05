@@ -37,7 +37,7 @@ public class MainFrame extends JFrame{
         initStages();
         setStartScreen();
         setOSCHandlers();
-//        setLeapController();
+        setLeapController();
     }
 
     private void buildMainFrame() {

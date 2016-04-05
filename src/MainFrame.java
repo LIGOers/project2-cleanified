@@ -7,9 +7,7 @@ import com.leapmotion.leap.*;
 import com.leapmotion.leap.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-/**
- * Created by samanthafadrigalan on 3/14/16.
- */
+
 public class MainFrame extends JFrame{
     private final String TITLE = "LIGO";
     private final int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
@@ -36,7 +34,7 @@ public class MainFrame extends JFrame{
         initStages();
         setStartScreen();
         setOSCHandlers();
-        setLeapController();
+//        setLeapController();
     }
 
     private void buildMainFrame() {

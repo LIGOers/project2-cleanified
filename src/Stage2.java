@@ -12,9 +12,6 @@ import java.awt.*;
 import java.io.File;
 import java.lang.*;
 
-/**
- * Created by samanthafadrigalan on 3/14/16.
- */
 class Stage2 extends JPanel{
     private JLabel header, footer, navbtn01, navbtn02, navbtn03, navbtn04, stagetwotxt;
     private JPanel container, stage;

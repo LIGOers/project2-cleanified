@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by samanthafadrigalan on 3/30/16.
- */
 class Stage1 extends JPanel{
     private JLabel button, stage;
     private JPanel rightPane;

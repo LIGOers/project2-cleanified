@@ -35,12 +35,12 @@ class Stage1 extends JPanel{
 
     private void initPanels() {
         rightPane = new JPanel();
-        rightPane.setPreferredSize(new Dimension(360, 576));
+        rightPane.setPreferredSize(new Dimension(675, 1080));
         rightPane.setOpaque(false);
     }
 
     private void setButton(){
-        button.setPreferredSize(new Dimension(244, 55));
+        button.setPreferredSize(new Dimension(371, 84));
     }
 
     private void setStage() {
@@ -49,7 +49,7 @@ class Stage1 extends JPanel{
     }
 
     private void setRightPane() {
-        rightPane.add(Box.createRigidArea(new Dimension(360, 450)));
+        rightPane.add(Box.createRigidArea(new Dimension(600, 800)));
         rightPane.add(button);
         stage.add(rightPane, BorderLayout.EAST);
     }

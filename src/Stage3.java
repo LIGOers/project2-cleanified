@@ -11,21 +11,22 @@ class Stage3 extends JPanel{
         initLabels();
         initPanels();
         setStage();
-        setFooter();
+        //setFooter(); // Using new footer for 4k display - Kyle
         setContainer();
         add(container);
         setVisible(true);
     }
 
     private void initLabels() {
-        header = new JLabel(new ImageIcon("header.jpg"));
-        footer = new JLabel(new ImageIcon("footer.jpg"));
+        header = new JLabel(new ImageIcon("header2.jpg"));
+        footer = new JLabel(new ImageIcon("footer3.jpg"));
         navbtn01 = new JLabel(new ImageIcon("btn-01-normal.jpg"));
         navbtn02 = new JLabel(new ImageIcon("btn-02-normal.jpg"));
         navbtn03 = new JLabel(new ImageIcon("btn-03-normal.jpg"));
         navbtn04 = new JLabel(new ImageIcon("btn-04-normal.jpg"));
-        stage3txt = new JLabel(new ImageIcon("stagethree-txt.jpg"));
-        stagemap = new JLabel(new ImageIcon("map.jpg"));
+        //stage3txt = new JLabel(new ImageIcon("stagethree-txt.jpg"));  // Disabled for 4k display - Kyle
+        stage3txt = new JLabel(new ImageIcon("stage3-content.jpg"));    // Added content into one image - Kyle
+       // stagemap = new JLabel(new ImageIcon("map.jpg"));              // Disabled for 4k display - Kyle
     }
 
     private void initPanels() {
@@ -34,10 +35,11 @@ class Stage3 extends JPanel{
     }
 
     private void setStage() {
-        stage.setPreferredSize(new Dimension(1024, 436));
+        stage.setPreferredSize(new Dimension(1920, 200));
         stage.setBackground(Color.BLACK);
         stage.add(stage3txt);
-        stage.add(stagemap);
+        //stage.add(stagemap); // Only using stage3txt for stage content - Kyle
+
     }
 
     private void setFooter() {
@@ -57,7 +59,7 @@ class Stage3 extends JPanel{
     }
 
     private void setContainer() {
-        container.setPreferredSize(new Dimension(1024, 576));
+        container.setPreferredSize(new Dimension(1920, 1080));
 
         container.setBackground(Color.BLACK);
 

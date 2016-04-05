@@ -3,6 +3,9 @@ import java.awt.*;
 import java.io.IOException;
 
 import com.illposed.osc.*;
+
+
+
 import com.leapmotion.leap.*;
 import com.leapmotion.leap.Frame;
 import java.awt.event.ActionEvent;
@@ -12,7 +15,7 @@ import java.awt.event.ActionListener;
  */
 public class MainFrame extends JFrame{
     private final String TITLE = "LIGO";
-    private final int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
+    private final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080;
     private final int BUFFER_WIDTH = 1024, BUFFER_HEIGHT = 170;
     private final int RECEIVER_PORT = 8000;
     private final int LEAP_TIMER_DELAY = 10;
@@ -31,7 +34,7 @@ public class MainFrame extends JFrame{
 
     public MainFrame() throws java.net.SocketException, InterruptedException{
         buildMainFrame();
-        buildBuffer();
+       // buildBuffer();  // Buffer disabled for the 4k display - Kyle
         buildRootPanel();
         initStages();
         setStartScreen();
@@ -77,6 +80,8 @@ public class MainFrame extends JFrame{
         currentStage = 1;
 
         add(rootPanel);
+
+        setBackground(Color.BLACK);
 
         setResizable(false);
 

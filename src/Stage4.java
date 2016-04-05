@@ -13,15 +13,15 @@ class Stage4 extends JPanel{
         initLabels();
         initPanels();
         setStage();
-        setFooter();
+        //setFooter(); // Using new footer for 4k display - Kyle
         setContainer();
         add(container);
         setVisible(true);
     }
 
     private void initLabels() {
-        header = new JLabel(new ImageIcon("header.jpg"));
-        footer = new JLabel(new ImageIcon("footer.jpg"));
+        header = new JLabel(new ImageIcon("header2.jpg"));
+        footer = new JLabel(new ImageIcon("footer4.jpg"));
         navbtn01 = new JLabel(new ImageIcon("btn-01-normal.jpg"));
         navbtn02 = new JLabel(new ImageIcon("btn-02-normal.jpg"));
         navbtn03 = new JLabel(new ImageIcon("btn-03-normal.jpg"));
@@ -34,7 +34,7 @@ class Stage4 extends JPanel{
     }
 
     private void setStage() {
-        stage.setPreferredSize(new Dimension(1024, 436));
+        stage.setPreferredSize(new Dimension(1920, 1080));
         stage.setBackground(Color.BLACK);
         initVideoInput();
         stage.add(videoInputPanel, BorderLayout.CENTER );
@@ -58,7 +58,7 @@ class Stage4 extends JPanel{
     }
 
     private void setContainer() {
-        container.setPreferredSize(new Dimension(1024, 576));
+        container.setPreferredSize(new Dimension(1920, 1080));
 
         container.setBackground(Color.BLACK);
 
@@ -72,8 +72,8 @@ class Stage4 extends JPanel{
     }
 
     private void initVideoInput() {
-        int width = 768;
-        int height = 436;
+        int width = 1280;
+        int height = 800;
         int fps = 30;
         videoInputPanel = new VideoInputDemo(width, height, fps);
         videoInputPanel.setMirror(true);

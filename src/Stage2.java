@@ -23,7 +23,7 @@ class Stage2 extends JPanel{
         initLabels();
         initPanels();
         setStage();
-        setFooter();
+        //setFooter();  // Using new footer for 4k display - Kyle
         setContainer();
         add(container);
         setVisible(true);
@@ -31,7 +31,7 @@ class Stage2 extends JPanel{
 
     private void initLabels() {
         header = new JLabel(new ImageIcon("header.jpg"));
-        footer = new JLabel(new ImageIcon("footer.jpg"));
+        footer = new JLabel(new ImageIcon("footer2.jpg"));
         navbtn01 = new JLabel(new ImageIcon("btn-01-normal.jpg"));
         navbtn02 = new JLabel(new ImageIcon("btn-02-normal.jpg"));
         navbtn03 = new JLabel(new ImageIcon("btn-03-normal.jpg"));
@@ -45,7 +45,7 @@ class Stage2 extends JPanel{
     }
 
     private void setStage() {
-        stage.setPreferredSize(new Dimension(1024, 436));
+        stage.setPreferredSize(new Dimension(1920, 700));
         stage.setBackground(Color.BLACK);
         initVideoPlayer();
         stage.add(stagetwotxt);
@@ -65,10 +65,11 @@ class Stage2 extends JPanel{
         footer.add(Box.createRigidArea(new Dimension(100, 25)));
 
         footer.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+
     }
 
     private void setContainer() {
-        container.setPreferredSize(new Dimension(1024, 576));
+        container.setPreferredSize(new Dimension(1920, 1080));
 
         container.setBackground(Color.BLACK);
 
@@ -120,7 +121,7 @@ class Stage2 extends JPanel{
         StackPane root = new StackPane();
         root.getChildren().add(mv);
 
-        Scene scene = new Scene(root, 500, 390);
+        Scene scene = new Scene(root, 900, 800);
         scene.setFill(javafx.scene.paint.Color.BLACK);
 
         mp.setCycleCount(MediaPlayer.INDEFINITE);

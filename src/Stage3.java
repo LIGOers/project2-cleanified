@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-/**
- * Created by samanthafadrigalan on 3/30/16.
- */
+
 class Stage3 extends JPanel{
     private JLabel header, footer, navbtn01, navbtn02, navbtn03, navbtn04, stage3txt, stagemap;
     private JPanel container, stage;

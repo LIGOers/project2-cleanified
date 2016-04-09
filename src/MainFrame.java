@@ -1,42 +1,59 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.net.URISyntaxException;
 
+/*
 import com.illposed.osc.*;
+
+
+
 import com.leapmotion.leap.*;
 import com.leapmotion.leap.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-/**
- * Created by samanthafadrigalan on 3/14/16.
- */
+*/
 public class MainFrame extends JFrame{
     private final String TITLE = "LIGO";
-    private final int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
+    private final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080;
     private final int BUFFER_WIDTH = 1024, BUFFER_HEIGHT = 170;
-    private final int RECEIVER_PORT = 8000;
-    private final int LEAP_TIMER_DELAY = 10;
-    private final long LEAP_SWIPE_DELAY = 300;
+    private final int PORT = 8000;
+    private final String IP = "localhost";
+    //private final int LEAP_TIMER_DELAY = 10;
+    //private final long LEAP_SWIPE_DELAY = 300;
 
     private int currentStage;
     private static JPanel rootPanel;
     private JPanel stage1, stage2, stage3, stage4;
-    private OSCPortIn receiver;
-    private int swipeCount;
-    private long lastLeapSwipeTime;
-    private float swipeDirection;
-    private Controller controller;
-    private Frame leapFrame;
-    private boolean screenChangedFromLeapSwipe;
+    private Socket socket;
+    private String clientID;
+    //private OSCPortIn receiver;
+    //private int swipeCount;
+    //private long lastLeapSwipeTime;
+    //private float swipeDirection;
+    //private Controller controller;
+    //private Frame leapFrame;
+    //private boolean screenChangedFromLeapSwipe;
 
-    public MainFrame() throws java.net.SocketException, InterruptedException{
+    public MainFrame() throws java.net.SocketException, InterruptedException, URISyntaxException{
         buildMainFrame();
-        buildBuffer();
+       // buildBuffer();  // Buffer disabled for the 4k display - Kyle
         buildRootPanel();
         initStages();
         setStartScreen();
-        setOSCHandlers();
-        setLeapController();
+        socket = IO.socket("http://" + IP + ":" + PORT);
+        socket.on(Socket.EVENT_CONNECT, (args) -> socketConnectedHandler(args));
+        socket.on("clientID", (args) -> socketClientID(args));
+        socket.on("currentPage", (args) -> socketCurrentPage(args));
+        socket.on(Socket.EVENT_DISCONNECT, (args) -> socketDisconnectHandler(args));
+        socket.connect();
+        //setOSCHandlers();
+        //setLeapController();
     }
 
     private void buildMainFrame() {
@@ -78,11 +95,13 @@ public class MainFrame extends JFrame{
 
         add(rootPanel);
 
+        setBackground(Color.BLACK);
+
         setResizable(false);
 
         setVisible(true);
     }
-
+/*
     private void setOSCHandlers() throws java.net.SocketException {
         receiver = new OSCPortIn(RECEIVER_PORT);
         receiver.addListener("/1/push1", OSChandler(true, false, false, false));
@@ -100,7 +119,7 @@ public class MainFrame extends JFrame{
             }
         };
     }
-
+*/
     private void changeScreen(boolean isStage1Visible, boolean isStage2Visible, boolean isStage3Visible, boolean isStage4Visible) {
         stage1.setVisible(isStage1Visible);
         stage2.setVisible(isStage2Visible);
@@ -121,6 +140,43 @@ public class MainFrame extends JFrame{
         }
     }
 
+    private void socketConnectedHandler(Object... args){
+        System.out.println("http://" + IP + ":" + PORT + " established");
+    }
+    private void socketClientID(Object... args){
+        clientID = args[0].toString();
+        System.out.println("clientID : " + clientID);
+    }
+    private void socketCurrentPage(Object... args){
+        try{
+            int newPage = Integer.parseInt(args[0].toString());
+            if(newPage > 3 || newPage < 0)
+                throw new Exception("New page out of range exception");
+            switch (newPage){
+                case 0:
+                    changeScreen(true, false, false, false);
+                    break;
+                case 1:
+                    changeScreen(false, true, false, false);
+                    break;
+                case 2:
+                    changeScreen(false, false, true, false);
+                    break;
+                case 3:
+                    changeScreen(false, false, false, true);
+                    break;
+            }
+            currentStage = newPage + 1;
+        }catch(NumberFormatException e){
+            System.out.println("New page format exception.");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void socketDisconnectHandler(Object... args){
+        System.out.println("Connection to http://" + IP + ":" + PORT + " established");
+    }
+/*
     private void setLeapController() {
         controller = new Controller();
         connectLeap();
@@ -209,6 +265,7 @@ public class MainFrame extends JFrame{
     }
 
     private void swipeLeftScreen() {
+
         switch(currentStage) {
             case 1:
                 changeScreen(false, false, false, true);
@@ -249,4 +306,5 @@ public class MainFrame extends JFrame{
         }
         lastLeapSwipeTime = System.currentTimeMillis();
     }
+    */
 }

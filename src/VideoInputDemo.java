@@ -26,7 +26,6 @@ public class VideoInputDemo extends JPanel {
     private final static long ONE_SECOND_IN_NANOS = 1000000000L;
 
     public VideoInputDemo(int width, int height, final int fps) {
-        System.out.println("in here");
         this.fpsFormat = new DecimalFormat("#0.0");
         this.setPreferredSize(new Dimension(width, height));
         this.startRetrieverThread(width, height, fps);

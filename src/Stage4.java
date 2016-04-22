@@ -4,7 +4,6 @@ import java.awt.*;
 class Stage4 extends JPanel{
     private JLabel header, footer, navbtn01, navbtn02, navbtn03, navbtn04;
     private JPanel container, stage;
-//    private VideoInputDemo videoInputPanel;
     private JPanel stretchAndSquashPanel;
 
     public Stage4() {
@@ -76,13 +75,4 @@ class Stage4 extends JPanel{
         StretchAndSquash stretchAndSquashApp = new StretchAndSquash(width, height);
         stretchAndSquashPanel = stretchAndSquashApp.getJPanel();
     }
-
-//    private void initVideoInput() {
-//        int width = 1280;
-//        int height = 800;
-//        int fps = 30;
-//        videoInputPanel = new VideoInputDemo(width, height, fps);
-//        videoInputPanel.setMirror(true);
-////        stage.add(videoInputPanel, BorderLayout.CENTER );
-//    }
 }

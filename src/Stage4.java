@@ -4,7 +4,8 @@ import java.awt.*;
 class Stage4 extends JPanel{
     private JLabel header, footer, navbtn01, navbtn02, navbtn03, navbtn04;
     private JPanel container, stage;
-    private VideoInputDemo videoInputPanel;
+//    private VideoInputDemo videoInputPanel;
+    private JPanel stretchAndSquashPanel;
 
     public Stage4() {
         initLabels();
@@ -33,8 +34,8 @@ class Stage4 extends JPanel{
     private void setStage() {
         stage.setPreferredSize(new Dimension(1920, 1080));
         stage.setBackground(Color.BLACK);
-        initVideoInput();
-        stage.add(videoInputPanel, BorderLayout.CENTER );
+        initStretchAndSquash();
+        stage.add(stretchAndSquashPanel, BorderLayout.CENTER );
         stage.repaint();
     }
 
@@ -68,12 +69,20 @@ class Stage4 extends JPanel{
         container.setVisible(true);
     }
 
-    private void initVideoInput() {
+    private void initStretchAndSquash() {
         int width = 1280;
         int height = 800;
         int fps = 30;
-        videoInputPanel = new VideoInputDemo(width, height, fps);
-        videoInputPanel.setMirror(true);
-//        stage.add(videoInputPanel, BorderLayout.CENTER );
+        StretchAndSquash stretchAndSquashApp = new StretchAndSquash(width, height);
+        stretchAndSquashPanel = stretchAndSquashApp.getJPanel();
     }
+
+//    private void initVideoInput() {
+//        int width = 1280;
+//        int height = 800;
+//        int fps = 30;
+//        videoInputPanel = new VideoInputDemo(width, height, fps);
+//        videoInputPanel.setMirror(true);
+////        stage.add(videoInputPanel, BorderLayout.CENTER );
+//    }
 }

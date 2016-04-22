@@ -163,14 +163,12 @@ public class StretchAndSquash extends PApplet {
                         this.imgDst.setImageInput(this._imgMichelson);
                     } else {
                         println("Switching to video");
-//                        this._camCapture = new Capture(this, 960, 720, 60);
                         this._camCapture = new Capture(this, (int) ((double) WIDTH * 1.25),  (int) ((double) HEIGHT * 1.25), 60);
                         this._camCapture.start();
                         this._inImg = null;
                         this._imgOp = 0;
                     }
                 }
-
                 this.unpause();
             } else if(this.key == 105) {
                 ImageWorker.interpol();

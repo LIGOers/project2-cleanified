@@ -27,7 +27,7 @@ class Stage1 extends JPanel{
 
     private void initLabels() {
         button = new JLabel(new ImageIcon("s1-btn-n1.jpg"));
-        stage = new JLabel(new ImageIcon("tp1-sketch1.jpg"));
+        stage = new JLabel(new ImageIcon("tp1-sketch1-inst.jpg"));
     }
 
     private void initPanels() {

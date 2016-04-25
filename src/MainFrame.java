@@ -100,6 +100,7 @@ public class MainFrame extends JFrame{
 
         setResizable(false);
 
+        setUndecorated(true);  // Make the app borderless to appear fullscreen. | Kyle
         setVisible(true);
     }
 

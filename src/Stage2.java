@@ -28,7 +28,7 @@ class Stage2 extends JPanel{
 
     private void initLabels() {
         header = new JLabel(new ImageIcon("header.jpg"));
-        footer = new JLabel(new ImageIcon("footer2.jpg"));
+        footer = new JLabel(new ImageIcon("footer2-inst.jpg"));
         navbtn01 = new JLabel(new ImageIcon("btn-01-normal.jpg"));
         navbtn02 = new JLabel(new ImageIcon("btn-02-normal.jpg"));
         navbtn03 = new JLabel(new ImageIcon("btn-03-normal.jpg"));
